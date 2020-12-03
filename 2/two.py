@@ -12,4 +12,4 @@ for line in data:
     if (password[lower-1] == letter) != (password[upper-1] == letter):
         num_new += 1
 
-print(f'{num}, new policy: {num_new}')
+print(f'Part one: {num}\nPart two: {num_new}')
