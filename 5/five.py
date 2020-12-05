@@ -1,39 +1,17 @@
 import numpy as np
 
 
+def convert(string):
+    string = string.replace('F', '0').replace('B', '1').replace('L', '0').replace('R', '1')
+    row, col = int(string[:7], 2), int(string[-3:], 2)
+    return row * 8 + col
+
+
 data = np.loadtxt('input.txt', str)
-seats = [['x' for col in range(8)] for row in range(128)]
 
-highest = 0
+data = list(map(convert, data))
+data.sort()
+lower, upper = data[0], data[-1]
+my_seat_id = set(range(lower, upper + 1)).difference(data).pop()
 
-for line in data:
-    rows = range(128)
-    cols = range(8)
-    for char in line:
-        half_rows = len(rows) // 2
-        half_cols = len(cols) // 2
-        if char == 'F':
-            rows = rows[:half_rows]
-        elif char == 'B':
-            rows = rows[half_rows:]
-        elif char == 'L':
-            cols = cols[:half_cols]
-        elif char == 'R':
-            cols = cols[half_cols:]
-    seats[rows[0]][cols[0]] = 'o'
-    seat_id = rows[0] * 8 + cols[0]
-    if seat_id > highest:
-        highest = seat_id
-
-skipped = False
-my_seat_id = None
-for row in range(len(seats)):
-    if my_seat_id:
-        break
-    for col in range(8):
-        if not skipped and seats[row][col] == 'o':
-            skipped = True
-        if skipped and seats[row][col] == 'x':
-            my_seat_id = row * 8 + col
-
-print(f'Part one: {highest}, Part two: {my_seat_id}')
+print(f'Part one: {data[-1]}, Part two: {my_seat_id}')
