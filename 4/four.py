@@ -25,8 +25,8 @@ with open('input.txt') as f:
                     or field[0] == 'eyr' and 2020 <= int(field[1]) <= 2030\
                     or field[0] == 'hgt' and ((field[1][-2:] == 'cm' and 150 <= int(field[1][:-2]) <= 193) or
                                               (field[1][-2:] == 'in' and 59 <= int(field[1][:-2]) <= 76))\
-                    or field[0] == 'hcl' and field[1][0] == '#' and re.search('^[0-9a-f]{6}$', field[1][1:])\
-                    or field[0] == 'ecl' and ['amb', 'blu', 'brn', 'gry', 'grn', 'hzl', 'oth'].__contains__(field[1])\
+                    or field[0] == 'hcl' and re.search('^#[0-9a-f]{6}$', field[1])\
+                    or field[0] == 'ecl' and field[1] in ['amb', 'blu', 'brn', 'gry', 'grn', 'hzl', 'oth']\
                     or field[0] == 'pid' and re.search('^[0-9]{9}$', field[1]):
                 fields_copy_two[field[0]] = True
 
