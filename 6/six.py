@@ -1,16 +1,12 @@
-num = 0
+num_any, num_every = 0, 0
 
 with open('input.txt') as f:
-    data = f.read().strip().split('\n\n')
+    blocks = f.read().strip().split('\n\n')
 
-    for block in data:
-        block = block.split('\n')
-        d = []
-        for i in range(len(block)):
-            d.append(set())
-            for c in block[i]:
-                d[i].add(c)
-        inter = set.intersection(*d)
-        num += len(inter)
+    for blk in blocks:
+        blk = blk.split('\n')
+        d = [{c for c in line} for line in blk]
+        num_any += len(set.union(*d))
+        num_every += len(set.intersection(*d))
 
-print(num)
+print(f'Part one: {num_any}, Part two: {num_every}')
