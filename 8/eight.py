@@ -21,6 +21,8 @@ with open('input.txt') as f:
     data = f.read().splitlines()
     data = [x.split(' ') for x in data]
 
+    p1 = run(data)
+
     to_change = [i for i in range(len(data)) if data[i][0] == 'jmp' or data[i][0] == 'nop']
     for i in to_change:
         d = data.copy()
@@ -29,4 +31,4 @@ with open('input.txt') as f:
         if not loop:
             break
 
-    print(accu)
+    print(f'Part one: {p1[0]}, Part two: {accu}')
