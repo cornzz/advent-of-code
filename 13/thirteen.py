@@ -1,5 +1,5 @@
-import math
 from functools import reduce
+from fileinput import input
 
 
 def chinese_remainder(con):
@@ -12,16 +12,15 @@ def chinese_remainder(con):
     return s % prod
 
 
-with open('input.txt') as f:
-    data = f.read().splitlines()
+data = [line.strip() for line in input('input.txt')]
 
 start = int(data[0])
 buses = [int(x) for x in data[1].split(',') if x != 'x']
 
 # Get next departure time for each bus, select one closest to start
-departures = [math.ceil(start / x) * x for x in buses]
-next_dep = min((time, index) for (index, time) in enumerate(departures))
-p1 = (next_dep[0] - start) * buses[next_dep[1]]
+departures = [[(start // x + 1) * x, x] for x in buses]
+next_time, next_bus = min(departures)
+p1 = (next_time - start) * next_bus
 
 # Solve task with CRA, for explanation see input.txt
 congruences = [(-a, int(n)) for a, n in enumerate(data[1].split(',')) if n != 'x']

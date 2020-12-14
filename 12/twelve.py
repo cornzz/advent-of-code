@@ -1,5 +1,5 @@
 import math
-
+from fileinput import input
 
 def move(direction, v, waypoint):
     if not waypoint:
@@ -43,8 +43,7 @@ def run(waypoint=False):
             rotate(action, value, waypoint)
 
 
-with open('input.txt') as f:
-    data = f.read().splitlines()
+data = [line.strip() for line in input('input.txt')]
 
 # Part one
 pos = [0, 0]  # x, y
