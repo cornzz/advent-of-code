@@ -1,6 +1,7 @@
 from fileinput import input
 
 # Solution is an LF(1)-Parser implementing following grammars
+# Inspired by @jonathanpaulson 's solution
 # ========== Part 1 ==========
 # TERM -> lit | \( EXPR \)
 # EXPR -> TERM (op TERM)*
