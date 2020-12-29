@@ -1,4 +1,3 @@
-from fileinput import input
 import re
 
 
@@ -18,14 +17,15 @@ def get_regex(i, p2=False):
     return f'(?:{"|".join(res)})'
 
 
-d = [line.strip() for line in input('input.txt')]
-rules = dict([rule.split(': ') for rule in d[:d.index('')]])
-messages = d[d.index('') + 1:]
+with open('input.txt') as f:
+    rules, messages = f.read().split('\n\n')
+
+rules = dict([rule.split(': ') for rule in rules.split('\n')])
 
 rgx = get_regex('0')
-p1_res = sum([bool(re.fullmatch(rgx, x)) for x in messages])
+p1_res = sum([bool(re.fullmatch(rgx, x)) for x in messages.split()])
 
 rgx = get_regex('0', True)
-p2_res = sum([bool(re.fullmatch(rgx, x)) for x in messages])
+p2_res = sum([bool(re.fullmatch(rgx, x)) for x in messages.split()])
 
 print(f'Part one: {p1_res}, Part two: {p2_res}')
