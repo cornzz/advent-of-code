@@ -30,15 +30,16 @@ def fit_tile(t, e, e_pos):
 
 
 def fuse_grid(grid, width):
-    """ Fuses rows of tile into single lines """
+    """ Fuses sub-rows of tile-rows into single lines """
     fused = []
-    for tile in range(0, len(grid), width):
+    for t_row in range(0, len(grid), width):
         for row in range(8):
-            fused.append([y for x in grid[tile:tile + width, row] for y in x])
+            fused.append([y for x in grid[t_row:t_row + width, row] for y in x])
     return np.array(fused)
 
 
 def grid_to_str(grid):
+    """ Creates single line string from grid """
     return ''.join([''.join(x) for x in grid])
 
 
@@ -51,30 +52,31 @@ for i in range(0, len(data), 12):
 
 # ------------------ Part 1 ------------------
 
-all_edges = [e for tile in tiles.values() for e in get_edges(tile)]
+tile_edges = dict((tile_id, get_edges(tile)) for (tile_id, tile) in tiles.items())
+all_edges = [e for x in tile_edges.values() for e in x]
 
 corner_tiles = []
-for tile in tiles:
+for tile_id, tile in tiles.items():
     border_edge_count = 0
-    for edge in get_edges(tiles[tile]):
+    for edge in tile_edges[tile_id]:
         if all_edges.count(edge) == 1:
             border_edge_count += 1
     # Border edges appear only twice (normal and reversed)
     # If a tile has two border edges it is a corner tile
     if border_edge_count == 4:
-        corner_tiles.append(tile)
+        corner_tiles.append(tile_id)
 
-p1 = math.prod([tile_id for tile_id in corner_tiles])
+p1 = math.prod(corner_tiles)
 
 # ------------------ Part 2 ------------------
 
-# Tile grid is built by selecting a corner tile, rotating it
+# Tile grid is built by selecting a corner tile as top left corner, rotating it
 # to the correct orientation and then appending matching tiles
 tile_grid = []
 w = int(math.sqrt(len(tiles)))
 
 # Rotate / flip first corner tile to correct orientation
-first_tile = corner_tiles.pop(0)
+first_tile = corner_tiles[0]
 for rot in get_rotations(tiles[first_tile]):
     edges = get_edges(rot)
     if all_edges.count(edges[0]) == 1 and all_edges.count(edges[2]) == 1:
@@ -87,12 +89,7 @@ for i in range(w):
     for j in range(w):
         if i == 0 and j == 0:
             continue
-        corner = False
-        if (i == 0 and j == w - 1 or
-                i == w - 1 and j == 0 or
-                i == w - 1 and j == w - 1):
-            corner = True
-        if j == 0:  # Left edge tile, match top edge with bottom edge of first tile of last row
+        if j == 0:  # Left edge tile, match next tile with bottom edge of first tile of last row
             t_last = tile_grid[-w]
             edge_to_match = get_edges(t_last)[1]
             edge_pos = 0
@@ -100,14 +97,11 @@ for i in range(w):
             t_last = tile_grid[-1]
             edge_to_match = get_edges(t_last)[3]
             edge_pos = 2
-        for tile_id in (tiles if not corner else corner_tiles):
-            tile = tiles[tile_id]
-            if edge_to_match in get_edges(tile):
+        for tile_id, tile in tiles.items():
+            if edge_to_match in tile_edges[tile_id]:
                 t_new = fit_tile(tile, edge_to_match, edge_pos)
                 tile_grid.append(t_new)
                 del tiles[tile_id]
-                if corner:
-                    corner_tiles.remove(tile_id)
                 break
 
 # Strip borders
