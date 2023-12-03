@@ -3,8 +3,8 @@ import re
 X = [l.strip() for l in open('input.txt')]
 p1 = p2 = 0
 
-nums = { 'one': '1', 'two': '2', 'three': '3', 'four': '4', 'five': '5', 'six': '6', 'seven': '7', 'eight': '8', 'nine': '9' }
-nums_re = '|'.join(nums.keys())
+nums = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
+nums_re = '|'.join(nums)
 
 for line in X:
 	matches = re.findall(r"\d", line)
@@ -13,8 +13,8 @@ for line in X:
 
 	matches = re.findall(fr"(?=(\d|{nums_re}))", line)
 	first, last = matches[0], matches[-1] 
-	first = nums[first] if first in nums else first
-	last = nums[last] if last in nums else last
+	first = str(nums.index(first) + 1) if first in nums else first
+	last = str(nums.index(last) + 1) if last in nums else last
 	p2 += int(first + last) 
 
 print(p1)
