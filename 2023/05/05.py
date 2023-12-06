@@ -14,9 +14,9 @@ for line in X:
 		maps.append([])
 
 p1 = [*seeds]
-for map_ in maps:
+for submaps in maps:
 	for i, seed in enumerate(p1):
-		for dst, src, rng in map_:
+		for dst, src, rng in submaps:
 			if src <= seed < src + rng:
 				p1[i] = seed + dst - src
 				break
@@ -32,29 +32,20 @@ for seed, range_ in zip(seeds[::2], seeds[1::2]):
 			map_start, map_end = src, src + rng
 			temp = [] # not yet mapped ranges
 			for start, end in ranges_to_map:
-				# no overlap
-				# -> no mapping, continue
-				if end <= map_start or start >= map_end:
+				temp_start = max(start, map_start)
+				temp_end = min(end, map_end)
+				if temp_start < temp_end:
+					# ranges overlap
+					mapped.append((temp_start + diff, temp_end + diff))
+					if start < map_start:
+						# left side leftover
+						temp.append((start, map_start))
+					if map_end < end:
+						# right side leftover
+						temp.append((map_end, end))
+				else:
+					# no overlap
 					temp.append((start, end))
-				# start .. map_start .. end .. map_end
-				# -> map map_start .. end, continue with start .. map_start
-				elif start < map_start < end < map_end:
-					mapped.append((map_start + diff, end + diff))
-					temp.append((start, map_start))
-				# map_start .. start .. map_end .. end
-				# -> map start .. map_end, continue with map_end .. end
-				elif map_start <= start < map_end < end:
-					mapped.append((start + diff, map_end + diff))
-					temp.append((map_end, end))
-				# start .. map_start .. map_end .. end
-				# -> map map_start .. map_end, continue with start .. map_start, map_end .. end
-				elif start < map_start < map_end <= end:
-					mapped.append((map_start + diff, map_end + diff))
-					temp.extend([(start, map_start), (map_end, end)])
-				# map_start .. start .. end .. map_end
-				# -> map start .. end
-				elif map_start <= start < end <= map_end:
-					mapped.append((start + diff, end + diff))
 			ranges_to_map = [*temp]
 		ranges_to_map += mapped
 	p2.extend(ranges_to_map)
