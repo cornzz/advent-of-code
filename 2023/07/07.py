@@ -1,7 +1,7 @@
 from functools import cmp_to_key
 
 X = [l.strip() for l in open('input.txt')]
-labels = ['A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2']
+labels = 'AKQJT98765432'
 
 def sorting(a, b):
 	if a[0] != b[0]:
@@ -37,8 +37,7 @@ for line in X:
 	p2.append((get_score(hand, True), hand, int(bid)))
 
 p1.sort(key=cmp_to_key(sorting))
-labels.remove('J')
-labels.append('J')
+labels = ''.join(labels.split('J')) + 'J'
 p2.sort(key=cmp_to_key(sorting))
 
 get_winnings = lambda r: sum([(len(r) - i) * bid for i, (_, _, bid) in enumerate(r)])
