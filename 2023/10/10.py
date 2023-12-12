@@ -54,6 +54,7 @@ def trace_net(net, p2=False):
 		steps += 1
 	return steps // 2 if not p2 else (net, loop)
 
+# Idea to use flood fill from youtube
 def flood_fill(net, visited):
 	H, W = len(net), len(net[0])
 	queue = [(0, 0)]

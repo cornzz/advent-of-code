@@ -13,7 +13,7 @@ def calc_distances(grid, rows, cols, multiplier):
     distances = []
     for (y0, x0), (y1, x1) in pairs:
         empty = sum([1 for e in rows if y0 < e < y1 or y1 < e < y0] + [1 for e in cols if x0 < e < x1 or x1 < e < x0])
-        # Manhattan distance + num. of empty rows * expansion multiplier
+        # Manhattan distance + num. of empty rows between points * expansion multiplier
         distances.append(abs(x1 - x0) + abs(y1 - y0) + empty * (multiplier - 1))
     return sum(distances)
 
