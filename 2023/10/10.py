@@ -1,8 +1,9 @@
 import os
 import sys
 
-print_fill = len(sys.argv) > 1
-X = [l.strip() for l in open('input.txt')]
+input_file = len(sys.argv) > 1 and sys.argv[1] != '-p' and sys.argv[1] or 'input.txt'
+print_fill = '-p' in sys.argv
+X = [l.strip() for l in open(input_file)]
 dirs = [(1, 0), (0, -1), (-1, 0), (0, 1)]
 
 def get_start(net):
@@ -25,12 +26,12 @@ def trace_net(net, p2=False):
 	dir_y, dir_x = get_dir(net, cy, cx)
 	if p2:
 		# Expand grid
-		new = []
+		new = ['..' * len(net[0]) + '.']
 		for line in net:
-			new.append(''.join([f'{x}.' for x in line]))
-			new.append('..' * len(line))
+			new.append('.' + '.'.join(list(line)) + '.')
+			new.append('..' * len(line) + '.')
 		net = new
-		cy, cx = cy*2, cx*2
+		cy, cx = cy*2 + 1, cx*2 + 1
 	H, W = len(net), len(net[0])
 	loop = [[False for _ in range(W)] for _ in range(H)]
 	while True:
@@ -55,21 +56,19 @@ def trace_net(net, p2=False):
 
 def flood_fill(net, visited):
 	H, W = len(net), len(net[0])
-	# Add non-loop edge fields to queue
-	queue = [(y, x) for x in range(W) for y in range(H) if (y in (0, H-1) or x in (0, W-1)) and not visited[y][x]]
+	queue = [(0, 0)]
+	visited[0][0] = True
 	while queue:
 		y, x = queue.pop(0)
 		net[y] = net[y][:x] + '#' + net[y][x+1:]
-		visited[y][x] = True
 		for dy, dx in dirs:
 			cy, cx = y+dy, x+dx
-			if 0 <= cy < H and 0 <= cx < W and not visited[cy][cx] and net[cy][cx] != '#' and (cy, cx) not in queue:
+			if 0 <= cy < H and 0 <= cx < W and not visited[cy][cx] and (cy, cx) not in queue:
 				queue.append((cy, cx))
 				visited[cy][cx] = True
 		if print_fill:
 			os.system('clear')
-			for line in net:
-				print(line)
+			print('\n'.join(net))
 	return net
 
 p1 = trace_net(X)
@@ -77,7 +76,7 @@ p1 = trace_net(X)
 X, loop = trace_net(X, True)
 X = flood_fill(X, loop)
 # Traverse filled grid with stride 2 and count fields inside loop
-p2 = len([(y, x) for y in range(0, len(X), 2) for x in range(0, len(X[0]), 2) if X[y][x] != '#' and not loop[y][x]])
+p2 = len([(y, x) for y in range(1, len(X), 2) for x in range(1, len(X[0]), 2) if X[y][x] != '#' and not loop[y][x]])
 
 print(p1)
 print(p2)
