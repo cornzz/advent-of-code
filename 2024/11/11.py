@@ -2,8 +2,8 @@ from functools import lru_cache
 
 X = [int(x) for x in open("input.txt").read().split()]
 
-@lru_cache(1000)
-def blink(num, d=0):
+@lru_cache(maxsize=None)
+def blink(num, d):
 	if d == 0:
 		return 1
 	numlen = len(str(num))
